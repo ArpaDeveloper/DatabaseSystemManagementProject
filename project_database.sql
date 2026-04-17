@@ -3,7 +3,7 @@
 CREATE TABLE Project(
 	PrID INT GENERATED ALWAYS AS IDENTITY,
 	Name VARCHAR(255) NOT NULL,
-	Budget MONEY NOT NULL,
+	Budget MONEY NOT NULL CHECK (Budget > 0),
 	CID INT,
 	PRIMARY KEY(PrID),
 	CONSTRAINT fk_customer
@@ -15,19 +15,19 @@ CREATE TABLE Project(
 CREATE TABLE Customer(
 	CID INT GENERATED ALWAYS AS IDENTITY,
 	Name VARCHAR(255) NOT NULL,
-	Email VARCHAR(255) NOT NULL,
+	Email VARCHAR(255) NOT NULL CHECK (Email LIKE '%@%'), -- CHECK constraint #1: basic email validation
 	LID INT,
 	PRIMARY KEY(CID),
 	CONSTRAINT fk_location
 		FOREIGN KEY(LID)
 			REFERENCES Location(LID)
-			ON UPDATE
+			ON UPDATE CASCADE
 );
 
 CREATE TABLE Location(
 	LID INT GENERATED ALWAYS AS IDENTITY,
 	Address VARCHAR(255) NOT NULL,
-	Country VARCHAR(255) NOT NULL,
+	Country VARCHAR(255) NOT NULL DEFAULT 'Finland', -- DEFAULT value #1
 	PRIMARY KEY(LID)
 );
 
@@ -36,15 +36,15 @@ CREATE TABLE Department(
 	Name VARCHAR(255) NOT NULL,
 	LID INT,
 	PRIMARY KEY(DepID),
-	CONSTRAINT fk_location --Change if can't have same name
+	CONSTRAINT fk_dept_location
 		FOREIGN KEY(LID)
 			REFERENCES Location(LID)
-			ON UPDATE
+			ON UPDATE CASCADE
 );
 
 CREATE TABLE Employee(
 	EmpID INT GENERATED ALWAYS AS IDENTITY,
-	Email VARCHAR(255) NOT NULL,
+	Email VARCHAR(255) NOT NULL UNIQUE, -- Meaningful constraint #1: Emails must be unique
 	Name VARCHAR(255) NOT NULL,
 	DepID INT,
 	PRIMARY KEY(EmpID),
@@ -62,50 +62,53 @@ CREATE TABLE UserGroup(
 
 CREATE TABLE Role(
 	RoleID INT GENERATED ALWAYS AS IDENTITY,
-	Name VARCHAR(255) NOT NULL,
+	Name VARCHAR(255) NOT NULL UNIQUE, -- Meaningful constraint #2: Role names must be unique
 	PRIMARY KEY(RoleID)
 );
 
 --Relationships
 ALTER TABLE Project
 ADD COLUMN startDate DATE,
-ADD COLUMN deadline DATE;
+ADD COLUMN deadline DATE,
+ADD CONSTRAINT chk_project_dates CHECK (deadline > startDate), -- CHECK if deadline is after startDate
+ADD COLUMN Status VARCHAR(50) DEFAULT 'Planned', -- Added Meaningful Attribute + DEFAULT value #3
+ADD CONSTRAINT chk_project_status CHECK (Status IN ('Planned', 'Ongoing', 'Completed', 'Cancelled'));
 
 CREATE TABLE Works(
 	EmpID INT,
 	PrID INT,
-	started DATE,
-	PRIMARY KEY(EmpID,PrID)
+	started DATE DEFAULT CURRENT_DATE, -- DEFAULT value #2
+	PRIMARY KEY(EmpID,PrID),
 	CONSTRAINT fk_works_emp
 		FOREIGN KEY(EmpID)
 		REFERENCES Employee(EmpID) ON DELETE CASCADE,
 	CONSTRAINT fk_works_pr
 		FOREIGN KEY(PrID)
 		REFERENCES Project(PrID) ON DELETE CASCADE
-)
+);
 
 CREATE TABLE PartOf(
 	GrID INT,
 	EmpID INT,
-	PRIMARY KEY(GrID,EmpID)
+	PRIMARY KEY(GrID,EmpID),
 	CONSTRAINT fk_partof_gr
 		FOREIGN KEY(GrID)
 		REFERENCES UserGroup(GrID) ON DELETE CASCADE,
 	CONSTRAINT fk_partof_emp
 		FOREIGN KEY(EmpID)
-		REFERENCES Employee(EmpID) ON DELETE CASCADE,
-)
+		REFERENCES Employee(EmpID) ON DELETE CASCADE
+);
 
 
 CREATE TABLE Has(
 	EmpID INT,
 	RoleID INT,
 	Description TEXT,
-	PRIMARY KEY(EmpID,RoleID)
+	PRIMARY KEY(EmpID,RoleID),
 	CONSTRAINT fk_has_emp
 		FOREIGN KEY(EmpID)
 		REFERENCES Employee(EmpID) ON DELETE CASCADE,
 	CONSTRAINT fk_has_role
 		FOREIGN KEY(RoleID)
 		REFERENCES Role(RoleID) ON DELETE CASCADE
-)
+);
