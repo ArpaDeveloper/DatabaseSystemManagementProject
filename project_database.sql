@@ -1,34 +1,36 @@
 --Relational Schema (Database)
---Tables/Entities
-CREATE TABLE Project(
-	PrID INT GENERATED ALWAYS AS IDENTITY,
-	Name VARCHAR(255) NOT NULL,
-	Budget MONEY NOT NULL CHECK (Budget > 0),
-	CID INT,
-	PRIMARY KEY(PrID),
-	CONSTRAINT fk_customer
-		FOREIGN KEY(CID)
-			REFERENCES Customer(CID)
-			ON UPDATE CASCADE
+
+--Tables with no dependencies first
+CREATE TABLE Location(
+	LID INT GENERATED ALWAYS AS IDENTITY,
+	Address VARCHAR(255) NOT NULL,
+	Country VARCHAR(255) NOT NULL DEFAULT 'Finland', 
+	PRIMARY KEY(LID)
 );
 
+CREATE TABLE UserGroup(
+	GrID INT GENERATED ALWAYS AS IDENTITY,
+	Name VARCHAR(255) NOT NULL,
+	PRIMARY KEY(GrID)
+);
+
+CREATE TABLE Role(
+	RoleID INT GENERATED ALWAYS AS IDENTITY,
+	Name VARCHAR(255) NOT NULL UNIQUE, 
+	PRIMARY KEY(RoleID)
+);
+
+--Tables relying on onther tables
 CREATE TABLE Customer(
 	CID INT GENERATED ALWAYS AS IDENTITY,
 	Name VARCHAR(255) NOT NULL,
-	Email VARCHAR(255) NOT NULL CHECK (Email LIKE '%@%'), -- CHECK constraint #1: basic email validation
+	Email VARCHAR(255) NOT NULL CHECK (Email LIKE '%@%'), 
 	LID INT,
 	PRIMARY KEY(CID),
 	CONSTRAINT fk_location
 		FOREIGN KEY(LID)
 			REFERENCES Location(LID)
 			ON UPDATE CASCADE
-);
-
-CREATE TABLE Location(
-	LID INT GENERATED ALWAYS AS IDENTITY,
-	Address VARCHAR(255) NOT NULL,
-	Country VARCHAR(255) NOT NULL DEFAULT 'Finland', -- DEFAULT value #1
-	PRIMARY KEY(LID)
 );
 
 CREATE TABLE Department(
@@ -42,42 +44,41 @@ CREATE TABLE Department(
 			ON UPDATE CASCADE
 );
 
+CREATE TABLE Project(
+	PrID INT GENERATED ALWAYS AS IDENTITY,
+	Name VARCHAR(255) NOT NULL,
+	Budget MONEY NOT NULL CHECK (Budget > '0' ::MONEY),
+	CID INT,
+	PRIMARY KEY(PrID),
+	CONSTRAINT fk_customer
+		FOREIGN KEY(CID)
+			REFERENCES Customer(CID)
+			ON UPDATE CASCADE
+);
+
 CREATE TABLE Employee(
 	EmpID INT GENERATED ALWAYS AS IDENTITY,
-	Email VARCHAR(255) NOT NULL UNIQUE, -- Meaningful constraint #1: Emails must be unique
+	Email VARCHAR(255) NOT NULL UNIQUE, 
 	Name VARCHAR(255) NOT NULL,
 	DepID INT,
 	PRIMARY KEY(EmpID),
-	CONSTRAINT fk_department 
+	CONSTRAINT fk_department
 		FOREIGN KEY(DepID)
 			REFERENCES Department(DepID)
 			ON UPDATE CASCADE
 );
 
-CREATE TABLE UserGroup(
-	GrID INT GENERATED ALWAYS AS IDENTITY,
-	Name VARCHAR(255) NOT NULL,
-	PRIMARY KEY(GrID)
-);
-
-CREATE TABLE Role(
-	RoleID INT GENERATED ALWAYS AS IDENTITY,
-	Name VARCHAR(255) NOT NULL UNIQUE, -- Meaningful constraint #2: Role names must be unique
-	PRIMARY KEY(RoleID)
-);
-
---Relationships
 ALTER TABLE Project
 ADD COLUMN startDate DATE,
 ADD COLUMN deadline DATE,
-ADD CONSTRAINT chk_project_dates CHECK (deadline > startDate), -- CHECK if deadline is after startDate
-ADD COLUMN Status VARCHAR(50) DEFAULT 'Planned', -- Added Meaningful Attribute + DEFAULT value #3
+ADD CONSTRAINT chk_project_dates CHECK (deadline > startDate), 
+ADD COLUMN Status VARCHAR(50) DEFAULT 'Planned', 
 ADD CONSTRAINT chk_project_status CHECK (Status IN ('Planned', 'Ongoing', 'Completed', 'Cancelled'));
 
 CREATE TABLE Works(
 	EmpID INT,
 	PrID INT,
-	started DATE DEFAULT CURRENT_DATE, -- DEFAULT value #2
+	started DATE DEFAULT CURRENT_DATE, 
 	PRIMARY KEY(EmpID,PrID),
 	CONSTRAINT fk_works_emp
 		FOREIGN KEY(EmpID)
@@ -98,7 +99,6 @@ CREATE TABLE PartOf(
 		FOREIGN KEY(EmpID)
 		REFERENCES Employee(EmpID) ON DELETE CASCADE
 );
-
 
 CREATE TABLE Has(
 	EmpID INT,
