@@ -1,4 +1,5 @@
 --Relational Schema (Database)
+--Tables/Entities
 CREATE TABLE Project(
 	PrID INT GENERATED ALWAYS AS IDENTITY,
 	Name VARCHAR(255) NOT NULL,
@@ -8,6 +9,7 @@ CREATE TABLE Project(
 	CONSTRAINT fk_customer
 		FOREIGN KEY(CID)
 			REFERENCES Customer(CID)
+			ON UPDATE CASCADE
 );
 
 CREATE TABLE Customer(
@@ -19,6 +21,7 @@ CREATE TABLE Customer(
 	CONSTRAINT fk_location
 		FOREIGN KEY(LID)
 			REFERENCES Location(LID)
+			ON UPDATE
 );
 
 CREATE TABLE Location(
@@ -36,6 +39,7 @@ CREATE TABLE Department(
 	CONSTRAINT fk_location --Change if can't have same name
 		FOREIGN KEY(LID)
 			REFERENCES Location(LID)
+			ON UPDATE
 );
 
 CREATE TABLE Employee(
@@ -47,6 +51,7 @@ CREATE TABLE Employee(
 	CONSTRAINT fk_department 
 		FOREIGN KEY(DepID)
 			REFERENCES Department(DepID)
+			ON UPDATE CASCADE
 );
 
 CREATE TABLE UserGroup(
@@ -60,3 +65,47 @@ CREATE TABLE Role(
 	Name VARCHAR(255) NOT NULL,
 	PRIMARY KEY(RoleID)
 );
+
+--Relationships
+ALTER TABLE Project
+ADD COLUMN startDate DATE,
+ADD COLUMN deadline DATE;
+
+CREATE TABLE Works(
+	EmpID INT,
+	PrID INT,
+	started DATE,
+	PRIMARY KEY(EmpID,PrID)
+	CONSTRAINT fk_works_emp
+		FOREIGN KEY(EmpID)
+		REFERENCES Employee(EmpID) ON DELETE CASCADE,
+	CONSTRAINT fk_works_pr
+		FOREIGN KEY(PrID)
+		REFERENCES Project(PrID) ON DELETE CASCADE
+)
+
+CREATE TABLE PartOf(
+	GrID INT,
+	EmpID INT,
+	PRIMARY KEY(GrID,EmpID)
+	CONSTRAINT fk_partof_gr
+		FOREIGN KEY(GrID)
+		REFERENCES UserGroup(GrID) ON DELETE CASCADE,
+	CONSTRAINT fk_partof_emp
+		FOREIGN KEY(EmpID)
+		REFERENCES Employee(EmpID) ON DELETE CASCADE,
+)
+
+
+CREATE TABLE Has(
+	EmpID INT,
+	RoleID INT,
+	Description TEXT,
+	PRIMARY KEY(EmpID,RoleID)
+	CONSTRAINT fk_has_emp
+		FOREIGN KEY(EmpID)
+		REFERENCES Employee(EmpID) ON DELETE CASCADE,
+	CONSTRAINT fk_has_role
+		FOREIGN KEY(RoleID)
+		REFERENCES Role(RoleID) ON DELETE CASCADE
+)
