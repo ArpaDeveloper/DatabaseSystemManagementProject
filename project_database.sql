@@ -4,19 +4,19 @@
 CREATE TABLE Location(
 	LID INT GENERATED ALWAYS AS IDENTITY,
 	Address VARCHAR(255) NOT NULL,
-	Country VARCHAR(255) NOT NULL DEFAULT 'Finland', 
+	Country VARCHAR(255) NOT NULL DEFAULT 'Finland',  -- DEFAULT value #1
 	PRIMARY KEY(LID)
 );
 
 CREATE TABLE UserGroup(
 	GrID INT GENERATED ALWAYS AS IDENTITY,
-	Name VARCHAR(255) NOT NULL,
+	Name VARCHAR(255) NOT NULL, -- Meaningful constraint #2: Role names must be unique
 	PRIMARY KEY(GrID)
 );
 
 CREATE TABLE Role(
 	RoleID INT GENERATED ALWAYS AS IDENTITY,
-	Name VARCHAR(255) NOT NULL UNIQUE, 
+	Name VARCHAR(255) NOT NULL UNIQUE, -- Meaningful constraint #2: Role names must be unique
 	PRIMARY KEY(RoleID)
 );
 
@@ -24,7 +24,7 @@ CREATE TABLE Role(
 CREATE TABLE Customer(
 	CID INT GENERATED ALWAYS AS IDENTITY,
 	Name VARCHAR(255) NOT NULL,
-	Email VARCHAR(255) NOT NULL CHECK (Email LIKE '%@%'), 
+	Email VARCHAR(255) NOT NULL CHECK (Email LIKE '%@%'), -- CHECK constraint #1: basic email validation
 	LID INT,
 	PRIMARY KEY(CID),
 	CONSTRAINT fk_location
@@ -58,7 +58,7 @@ CREATE TABLE Project(
 
 CREATE TABLE Employee(
 	EmpID INT GENERATED ALWAYS AS IDENTITY,
-	Email VARCHAR(255) NOT NULL UNIQUE, 
+	Email VARCHAR(255) NOT NULL UNIQUE, -- Meaningful constraint #1: Emails must be unique
 	Name VARCHAR(255) NOT NULL,
 	DepID INT,
 	PRIMARY KEY(EmpID),
@@ -71,8 +71,8 @@ CREATE TABLE Employee(
 ALTER TABLE Project
 ADD COLUMN startDate DATE,
 ADD COLUMN deadline DATE,
-ADD CONSTRAINT chk_project_dates CHECK (deadline > startDate), 
-ADD COLUMN Status VARCHAR(50) DEFAULT 'Planned', 
+ADD CONSTRAINT chk_project_dates CHECK (deadline > startDate),  -- CHECK if deadline is after startDate
+ADD COLUMN Status VARCHAR(50) DEFAULT 'Planned', --  Added Meaningful Attribute + DEFAULT value #3
 ADD CONSTRAINT chk_project_status CHECK (Status IN ('Planned', 'Ongoing', 'Completed', 'Cancelled'));
 
 CREATE TABLE Works(
