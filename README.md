@@ -1,4 +1,4 @@
-## 🚀 How to Run the Project
+## How to Run the Project
 
 To properly test the functionality of this project, execute the following files **in order**:
 
@@ -19,7 +19,7 @@ To properly test the functionality of this project, execute the following files 
 
 ---
 
-### ⚠️ Important Notes
+### Important Notes
 
 - Ensure each script runs successfully before proceeding to the next.
 - Running scripts out of order may result in errors due to missing tables, data, or permissions.
