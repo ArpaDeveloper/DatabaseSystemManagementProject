@@ -2,7 +2,7 @@
 
 To properly test the functionality of this project, execute the following files **in order**:
 
-1. `Database_Population.sql`  
+1. `project_database.sql`  
    *Creates the database schema and triggers.*
 
 2. `database_population.sql`  
@@ -17,9 +17,3 @@ To properly test the functionality of this project, execute the following files 
 5. `access_control.sql`  
    *Applies access control and permissions.*
 
----
-
-### Important Notes
-
-- Ensure each script runs successfully before proceeding to the next.
-- Running scripts out of order may result in errors due to missing tables, data, or permissions.
