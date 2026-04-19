@@ -54,7 +54,7 @@ WHERE Name = 'Flight Tracker 2.0';
 -- Remove an employee from the system based on email address
 -- Because of the Delete Rule, ON CASCADE, every information connected with this employee will be deleted.
 DELETE FROM Employee
-WHERE Email = 'hannah.hill@corp.com';
+WHERE Email = 'fiona.finn@corp.com';
 
 
 
