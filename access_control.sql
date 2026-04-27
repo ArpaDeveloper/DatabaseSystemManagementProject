@@ -4,7 +4,7 @@ CREATE ROLE readonly_staff;
 CREATE ROLE db_superuser;
 
 -- Step 2: Grant privileges to roles
--- Project managers can read everything and modify projects/works
+-- Project managers can read everything and modify projects or works
 GRANT SELECT ON ALL TABLES IN SCHEMA public TO project_manager;
 GRANT INSERT, UPDATE, DELETE ON Project, Works TO project_manager;
 GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA public TO project_manager;
