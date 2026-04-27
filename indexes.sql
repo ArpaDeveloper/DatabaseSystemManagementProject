@@ -7,15 +7,12 @@ CREATE INDEX idx_employee_depid ON Employee(DepID);
 
 -- Associative tables (M:N relationships)
 -- Improve performance for queries filtering by employee or project/role/group
-CREATE INDEX idx_works_empid ON Works(EmpID);
-CREATE INDEX idx_works_prid ON Works(PrID);
+CREATE INDEX idx_works_empid_prid ON Works(EmpID, PrID);
+CREATE INDEX idx_partof_empid_grid ON PartOf(EmpID, GrID);
+CREATE INDEX idx_has_empid_roleid ON Has(EmpID, RoleID);
 
-CREATE INDEX idx_partof_empid ON PartOf(EmpID);
-CREATE INDEX idx_partof_grid ON PartOf(GrID);
+-- Optional reverse index (only if you query by PrID first)
+CREATE INDEX idx_works_prid_empid ON Works(PrID, EmpID);
 
-CREATE INDEX idx_has_empid ON Has(EmpID);
-CREATE INDEX idx_has_roleid ON Has(RoleID);
-
--- Trigger optimization
--- Frequently used in trigger filters for project status checks
+-- Status index (keep if selective / frequently filtered)
 CREATE INDEX idx_project_status ON Project(Status);
