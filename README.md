@@ -5,15 +5,17 @@ To properly test the functionality of this project, execute the following files 
 1. `project_database.sql`  
    *Creates the database schema and triggers.*
 
-2. `database_population.sql`  
+2. `indexes.sql`  
+   *Creates indexes to optimize query performance.*
+
+3. `database_population.sql`  
    *Populates the database with initial data.*
 
-3. `project_queries.sql`  
+4. `project_queries.sql`  
    *Runs the main project queries.*
 
-4. `trigger_tests.sql`  
+5. `trigger_tests.sql`  
    *Tests the implemented triggers.*
 
-5. `access_control.sql`  
+6. `access_control.sql`  
    *Applies access control and permissions.*
-
