@@ -4,7 +4,8 @@ CREATE ROLE readonly_staff;
 CREATE ROLE db_superuser;
 
 -- Step 2: Grant privileges to roles
--- Project managers can read everything and modify projects or works
+
+-- Project manager can read everything and modify projects or works
 GRANT SELECT ON ALL TABLES IN SCHEMA public TO project_manager;
 GRANT INSERT, UPDATE, DELETE ON Project, Works TO project_manager;
 GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA public TO project_manager;
@@ -12,7 +13,7 @@ GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA public TO project_manager;
 -- Readonly staff can only read
 GRANT SELECT ON ALL TABLES IN SCHEMA public TO readonly_staff;
 
--- Superuser can do everything
+-- Superuser (admin) can do everything
 GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO db_superuser;
 GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO db_superuser;
 
@@ -20,8 +21,8 @@ GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO db_superuser;
 CREATE USER marci_pm WITH PASSWORD 'DD26_pm';
 CREATE USER arpa_staff WITH PASSWORD 'ketchup_on_everything';
 CREATE USER cristi_superuser WITH PASSWORD 'super_password123';
-GRANT db_superuser TO cristi_superuser;
 
+GRANT db_superuser TO cristi_superuser;
 GRANT project_manager TO marci_pm;
 GRANT readonly_staff TO arpa_staff;
 
@@ -65,6 +66,7 @@ VALUES ('Cristi Test Project', 99000.00::money, 1, '2026-05-01', '2027-01-01', '
 
 UPDATE Project SET Status = 'Ongoing' WHERE Name = 'Cristi Test Project';
 
+-- Clean up after example operations 
 DELETE FROM Project WHERE Name = 'Cristi Test Project';
 
 -- Reset to superuser/session owner
