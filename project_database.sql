@@ -11,6 +11,7 @@
 -- DROP TABLE IF EXISTS Works CASCADE;
 -- DROP TABLE IF EXISTS PartOf CASCADE;
 -- DROP TABLE IF EXISTS Has CASCADE;
+-- DROP INDEX IF EXISTS idx_customer_lid CASCADE;
 
 --Tables with no dependencies first
 CREATE TABLE Location(
